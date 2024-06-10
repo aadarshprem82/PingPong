@@ -30,7 +30,7 @@ const ball = {
 }
 
 const net = {
-    x: (canvas.width - 2) / 2,
+    x: (canvas.width - 2 - 10) / 2,
     y: 0,
     width: 2,
     height: 10,
@@ -41,6 +41,21 @@ canvas.addEventListener("mousemove", function (event) {
     let rect = canvas.getBoundingClientRect();
     user1.y = event.clientY - rect.top - user1.height / 2;
 })
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth - 10;
+    canvas.height = window.innerHeight - 10;
+
+    user1.y = (canvas.height - user1.height) / 2;
+    user2.x = canvas.width - user2.width;
+    user2.y = (canvas.height - user2.height) / 2;
+    net.x = (canvas.width - 12)/2
+    resetBall();
+    update();
+}
+
+canvas.addEventListener("resize", resizeCanvas);
+resizeCanvas();
 
 function drawRect(x, y, width, height, color) {
     context.fillStyle = color;

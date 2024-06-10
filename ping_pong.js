@@ -70,8 +70,10 @@ function drawArc(x, y, radius, color) {
 function resetBall() {
     ball.x = canvas.width / 2;
     ball.y = canvas.height / 2;
-    ball.velocityX = -ball.velocityX;
-    ball.speed = 7;
+    // ball.velocityX = -ball.velocityX;
+    ball.speed = 5;
+    ball.velocityX = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
+    ball.velocityY = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
 }
 
 function render() {
@@ -149,5 +151,5 @@ function main() {
     render();
 }
 
-let frames = 50;
+let frames = 60;
 let loop = setInterval(main, 1000 / frames);

@@ -2,84 +2,84 @@ const canvas = document.getElementById("ping_pong");
 const context = canvas.getContext('2d');
 
 const user1 = {
-    x : 0,
-    y : (canvas.height - 100)/2,
-    width : 10,
-    height : 100,
-    score : 0,
-    color:'black'
+    x: 0,
+    y: (canvas.height - 100) / 2,
+    width: 10,
+    height: 100,
+    score: 0,
+    color: 'black'
 }
 
 const user2 = {
-    x : (canvas.width - 10),
-    y : (canvas.height - 100)/2,
-    width : 10,
-    height : 100,
-    score : 0,
-    color:'aqua'
+    x: (canvas.width - 10),
+    y: (canvas.height - 100) / 2,
+    width: 10,
+    height: 100,
+    score: 0,
+    color: 'aqua'
 }
 
 const ball = {
-    x : canvas.width /2,
-    y : canvas.height/2,
-    radius : 10,
-    velocityX : 5,
-    velocityY : 5,
-    speed : 7,
-    color : 'BLACK'
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 10,
+    velocityX: 5,
+    velocityY: 5,
+    speed: 7,
+    color: 'BLACK'
 }
 
-const net ={
-    x: (canvas.width -2 )/2,
-    y : 0,
-    width : 2,
-    height : 10,
-    color : 'lightgreen'
+const net = {
+    x: (canvas.width - 2) / 2,
+    y: 0,
+    width: 2,
+    height: 10,
+    color: 'lightgreen'
 }
 
-canvas.addEventListener("mousemove", function(event){
+canvas.addEventListener("mousemove", function (event) {
     let rect = canvas.getBoundingClientRect();
-    user1.y = event.clientY - rect.top - user1.height/2;
+    user1.y = event.clientY - rect.top - user1.height / 2;
 })
 
-function drawRect(x, y, width, height, color){
+function drawRect(x, y, width, height, color) {
     context.fillStyle = color;
-    context.fillRect(x,y,width,height);
+    context.fillRect(x, y, width, height);
 }
 
-function drawText(text, x, y){
+function drawText(text, x, y) {
     context.fillStyle = 'Red';
     context.font = '50px Arial';
-    context.fillText(text, x,y);
+    context.fillText(text, x, y);
 }
 
-function drawNet(){
-    for(let i = 0; i < canvas.height; i += 15){
+function drawNet() {
+    for (let i = 0; i < canvas.height; i += 15) {
         drawRect(net.x, net.y + i, net.width, net.height, net.color);
     }
 }
 
-function drawArc(x, y, radius, color){
+function drawArc(x, y, radius, color) {
     context.fillStyle = color;
     context.beginPath();
-    context.arc(x, y, radius, Math.PI*2, true);
+    context.arc(x, y, radius, 0, Math.PI * 2, true);
     context.closePath();
     context.fill();
 }
 
-function resetBall(){
-    ball.x = canvas.width/2;
-    ball.y = canvas.height/2;
+function resetBall() {
+    ball.x = canvas.width / 2;
+    ball.y = canvas.height / 2;
     ball.velocityX = -ball.velocityX;
     ball.speed = 7;
 }
 
-function render(){
-    drawRect(0,0,canvas.width, canvas.height,"white");
+function render() {
+    drawRect(0, 0, canvas.width, canvas.height, "white");
 
     //scores
-    drawText(user1.score, canvas.width/4, canvas.height/5);
-    drawText(user2.score, 3*canvas.width/4, canvas.height/5);
+    drawText(user1.score, canvas.width / 4, canvas.height / 5);
+    drawText(user2.score, 3 * canvas.width / 4, canvas.height / 5);
 
     drawNet();
 
@@ -90,7 +90,7 @@ function render(){
     drawArc(ball.x, ball.y, ball.radius, ball.color);
 }
 
-function collision(ball, player){
+function collision(ball, player) {
     player.top = player.y;
     player.bottom = player.y + player.height;
     player.left = player.x;
@@ -104,12 +104,12 @@ function collision(ball, player){
     return (player.left < ball.right && player.top < ball.bottom && player.right > ball.left && player.bottom > ball.top);
 }
 
-function update(){
-    if(ball.x - ball.radius == 0){
+function update() {
+    if (ball.x - ball.radius <= 0) {
         user2.score += 1;
         resetBall();
     }
-    else if(ball.x+ball.radius > canvas.width){
+    else if (ball.x + ball.radius >= canvas.width) {
         user1.score += 1;
         resetBall();
     }
@@ -117,21 +117,25 @@ function update(){
     ball.x += ball.velocityX;
     ball.y += ball.velocityY;
 
-    user2.y += ((ball.y - (user2.y + user2.height/2))*0.1);
+    user2.y += ((ball.y - (user2.y + user2.height / 2)) * 0.1);
 
-    if(ball.y-ball.radius < 0 || ball.y+ball.radius > canvas.height){
+    if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
         ball.velocityY = -ball.velocityY;
+
+        if (Math.abs(ball.velocityY) < 0.1) {
+            ball.velocityY += (ball.velocityY > 0) ? 0.2 : -0.2;
+        }
     }
 
-    let currentInteraction = (ball.y+ball.radius < canvas.width/2) ? user1 : user2;
+    let currentInteraction = (ball.x < canvas.width / 2) ? user1 : user2;
 
-    if(collision(ball, currentInteraction)){
-        let collisionPoint = (ball.y - (currentInteraction.y + currentInteraction.height/2));
-        collisionPoint = collisionPoint / (currentInteraction.height/2);
+    if (collision(ball, currentInteraction)) {
+        let collisionPoint = (ball.y - (currentInteraction.y + currentInteraction.height / 2));
+        collisionPoint = collisionPoint / (currentInteraction.height / 2);
 
-        let angleRad = (Math.PI/4)*collisionPoint;
+        let angleRad = (Math.PI / 4) * collisionPoint;
 
-        let direction = (ball.x + ball.radius < canvas.width / 2) ? 1 : -1;
+        let direction = (ball.x < canvas.width / 2) ? 1 : -1;
         ball.velocityX = direction * ball.speed * Math.cos(angleRad);
         ball.velocityY = ball.speed * Math.sin(angleRad);
 
@@ -140,10 +144,10 @@ function update(){
 
 }
 
-function main(){
+function main() {
     update();
     render();
 }
 
 let frames = 50;
-let loop = setInterval(main, 1000/frames);
+let loop = setInterval(main, 1000 / frames);

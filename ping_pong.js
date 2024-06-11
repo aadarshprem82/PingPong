@@ -37,25 +37,31 @@ const net = {
     color: 'lightgreen'
 }
 
-canvas.addEventListener("mousemove", function (event) {
-    let rect = canvas.getBoundingClientRect();
-    user1.y = event.clientY - rect.top - user1.height / 2;
-})
-
 function resizeCanvas() {
-    canvas.width = window.innerWidth - 50;
-    canvas.height = window.innerHeight - 50;
+    canvas.width = window.innerWidth * 0.6;
+    canvas.height = window.innerHeight * 0.9;
 
     user1.y = (canvas.height - user1.height) / 2;
     user2.x = canvas.width - user2.width;
     user2.y = (canvas.height - user2.height) / 2;
-    net.x = (canvas.width - 12)/2
+    net.x = (canvas.width - 12) / 2
     resetBall();
     update();
 }
 
 canvas.addEventListener("resize", resizeCanvas);
 resizeCanvas();
+
+canvas.addEventListener("mousemove", function (event) {
+    let rect = canvas.getBoundingClientRect();
+    user1.y = event.clientY - rect.top - user1.height / 2;
+});
+
+canvas.addEventListener('touchmove', function (event) {
+    event.preventDefault();
+    let rect = canvas.getBoundingClientRect();
+    user1.y = event.touches[0].clientY - rect.top - user1.height / 2;
+});
 
 function drawRect(x, y, width, height, color) {
     context.fillStyle = color;
@@ -121,6 +127,19 @@ function collision(ball, player) {
     return (player.left < ball.right && player.top < ball.bottom && player.right > ball.left && player.bottom > ball.top);
 }
 
+function keepInBounds() {
+    if (user1.y < 0) {
+        user1.y = 0;
+    } else if (user1.y + user1.height > canvas.height) {
+        user1.y = canvas.height - user1.height;
+    }
+
+    if (user2.y < 0) {
+        user2.y = 0;
+    } else if (user2.y + user2.height > canvas.height) {
+        user2.y = canvas.height - user2.height;
+    }
+}
 function update() {
     if (ball.x - ball.radius <= 0) {
         user2.score += 1;
@@ -159,13 +178,14 @@ function update() {
         ball.speed += 0.1;
     }
 
+    keepInBounds();
 }
 
 function main() {
     update();
     render();
 }
-main();
+// main();
 
 let frames = 60;
-// let loop = setInterval(main, 1000 / frames);
+let loop = setInterval(main, 1000 / frames);

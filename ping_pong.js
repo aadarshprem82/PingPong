@@ -43,8 +43,8 @@ canvas.addEventListener("mousemove", function (event) {
 })
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth - 10;
-    canvas.height = window.innerHeight - 10;
+    canvas.width = window.innerWidth - 50;
+    canvas.height = window.innerHeight - 50;
 
     user1.y = (canvas.height - user1.height) / 2;
     user2.x = canvas.width - user2.width;
@@ -165,6 +165,7 @@ function main() {
     update();
     render();
 }
+main();
 
 let frames = 60;
-let loop = setInterval(main, 1000 / frames);
+// let loop = setInterval(main, 1000 / frames);
